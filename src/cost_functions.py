@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 import itertools
+import numpy as np 
 
 def cs_confusion_matrix(y_test, y_pred, cost_matrix):
     """
@@ -88,22 +89,22 @@ def plot_confusion_matrix(ax, cm, title, classes=['Legitimate','Fraud'],
     ax.set_ylabel('Actual')    
 
 
-def print_confusion(model, title):
+def print_confusion(model, title, X_train, y_train, X_test, y_test, c_test, threshold=0.5):
     model.fit(X_train, y_train)
     pred_prob = model.predict_proba(X_test)[:,1]
-    threshold = 0.5
 
     # print confusion matrix
     cnf_matrix = confusion_matrix(y_test, pred_prob >= threshold)
-    fix, ax = plt.subplots()
-    plot_confusion_matrix(ax, cnf_matrix, title, classes=['Legitimate','Fraud'],
+    fig, axs = plt.subplots(1,2)
+    plot_confusion_matrix(axs[0], cnf_matrix, title, classes=['Legitimate','Fraud'],
                               cmap=plt.cm.Blues, currency=False)
 
     # print cost matrix
     cs_cnf_matrix = cs_confusion_matrix(y_test, pred_prob >= threshold, cost_matrix(c_test)) 
-    fix, ax = plt.subplots()
-    plot_confusion_matrix(ax, cs_cnf_matrix, title, classes=['Legitimate','Fraud'],
+    plot_confusion_matrix(axs[1], cs_cnf_matrix, title, classes=['Legitimate','Fraud'],
                           cmap=plt.cm.Blues, currency=True)
+    
+    return fig
 
 if __name__ == '__main__':
     rf = RandomForestClassifier(n_jobs=-1,
