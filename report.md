@@ -1,17 +1,32 @@
 # Ticket Purchase Fraud Detection
 
-Allan, Isabella, and Lauren
+Allan Alberts, Isabella Sun, and Lauren Schoener
 
 ## Process Flow
-Our approach to building our fraud detection model was to begin by cleaning our data, then review our feature importance, and lastly to test and potentially combine machine learning models to make the best prediction as to whether or not a ticket was fraudulent. 
 
-## Preprocessing
-Prior to building our model we reviewed the account types associated with our transactions and idenitfied which transactions were classified as fraud and which were non-fradulent. A few of the columns had information stored in dictionaries that we broke apart into seperate features to better characterize our ticket transactions. 
+1. Preprocessing
 
-Reviewing our features, we noticed that several of them may pose issues for our machine learning models when creating our dummy variables. To avoid these issues, we removed several columns from our dataframe. 
+    - Clean the data
 
-After we had our final data frame we did an exploratory data analysis on our data to determine how user age, and sale duration varied with fraudulent and non-fraudulent transactions.
+        We began by cleaning the data. We removed features that we theorized were irrelevant and had a large proportion of missing observations. We also removed any tickets with missing information. We also transformed categorical variables to dummies. 
 
+    - Exploratory data analysis
+        
+        We conducted an exploratory data analysis of our target variable (fraud) with key features. 
+
+2. Compare predictive models: Random Forest, Gradient Boost, XGBoost
+
+    We then ran three different predictive models and trained each model to determine whether a ticket is fraudulent. We compared the performance of each model on a holdout test set of data and evaluated their performance on the F1 score of each model. 
+
+3. Grid Search Cross Validation
+
+    We improved each model by conducting a grid search cross validation. 
+
+4. Voting Classifier 
+
+    Each model had its strengths, so we combined the three models into a voting classifier model
+
+## Exploratory Data Analysis 
 
 <p align="center">
     <img src="images/User_age_freq.png" />
@@ -27,19 +42,92 @@ The proportion of fraudulent transations was much higher for payout types that w
     <img src="images/prop_fraud_bypayout.png" />
 </p>
 
-## Accuracy Metrics
-To measure the accuracy of both our seperate models and our Voting Classifier, we measured the precision, recall and F1 score. We also created a confusion matrix to better visualize how our model was performing. 
+## Parameter Tuning
+We tuned the hyperparameters of each of the three classifiers by using a grid search cross validation to find the parameters that would return the best cross validated f1 score. 
 
-<p align="center">
-    <img src="images/accuracy_matrics.png" />
-</p>
+### Result of Random Forest Grid Search :
+|Parameter            | Optimal | 
+|----------------|---------------|
+|max_depth            | 4        | 
+|max_features         | sqrt     | 
+|oob_score            | True     | 
+|n_estimators         | 20       | 
+|class_weight         | balanced | 
+
+### Result of XGBoost Grid Search 
+|Parameter            | Optimal  | 
+|---------------------|----------|
+|max_depth            | None     | 
+|min_child_weight     | 0.1      | 
+|learning_rate        | 0.5      | 
+
+### Result of Gradient Boost Grid Search:
+| Parameter            | Optimal  | 
+| ---------------------|-----------|
+| max_depth            | None     | 
+| max_features         | sqrt     | 
+|min_samples_split    | 4        | 
+|min_samples_leaf     | 1        | 
+|n_estimators         | 50       | 
+|learning_rate        | 0.6      | 
 
 ## Validation and Testing Methodology
 We used a train-test-split to seperate our data into a training and testing set. Our testing set was represented by 20% of the data. Multiple models including a Random Forest, Gradient Boosted Grid Search, and XGBoost were tested and the accuracy metrics were reviewed to compare the accuracy metrics and decide which model to use.
 
 Using a Voting Classifier we combined our three models to try to optimize detection performance. We used soft voting to weight each classifier's importance and sum them together. Although the Voting Classifier did not have the highest of each accuracy metric, it did optimize the other classifiers to improve our final confusion matrix. 
 
-## Parameter Tuning
-We began by tunning the hyperparameters of each of the three classifiers used to build the Voting Classifier and from there we assessed their individual accuracy matrics to choose the weight that each would contribute to our Voting Classifier. 
+## Performance Metrics
+To measure the performance of the models, we looked at the precision, recall, and F1 scores. We focused on these scores to try to minimize the number of false negatives and false positives predicted by each model. 
+
+
+<p align="center">
+    <img src="images/rf_matrix.png" />
+</p>
+
+| Random Forest        |    Score  | 
+| ---------------------|-----------|
+| Precision            | 0.536     | 
+| Recall               | 0.926     | 
+| F1                   | 0.679     | 
+
+<p align="center">
+    <img src="images/xgb_matrix.png" />
+</p>
+
+| XGBoost        |    Score  | 
+| ---------------------|-----------|
+| Precision            | 0.932     | 
+| Recall               | 0.831     | 
+| F1                   | 0.879     | 
+
+
+<p align="center">
+    <img src="images/gb_matrix.png" />
+</p>
+
+| Gradient Boost        |    Score  | 
+| ---------------------|-----------|
+| Precision            | 0.958     | 
+| Recall               | 0.797     | 
+| F1                   | 0.870      | 
+
+<p align="center">
+    <img src="images/voting_matrix.png" />
+</p>
+
+| Voting Classifier       |    Score  | 
+| ---------------------|-----------|
+| Precision            | 0.934     | 
+| Recall               | 0.853     | 
+| F1                   | 0.891     | 
+
+
+We also attempted to use an isolation forest algorithm to predict fraud. The results of the isolation forest model are below. 
+<p align="center">
+    <img src="images/if_matrix.png" />
+</p>
+
+## Important Features
+
 
 ## Future Improvements
