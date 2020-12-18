@@ -1,15 +1,11 @@
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import GradientBoostingClassifier
+import numpy as np
+
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier
 import xgboost as xgb
 from xgboost.sklearn import XGBClassifier
-from sklearn.ensemble import VotingClassifier
 
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import StratifiedKFold
-from sklearn.model_selection import cross_validate
-from sklearn.metrics import recall_score
-from sklearn.metrics import precision_score
-from sklearn.metrics import f1_score
+from sklearn.model_selection import train_test_split, StratifiedKFold, cross_validate, GridSearchCV, cross_val_score
+from sklearn.metrics import recall_score, precision_score, f1_score
 import time
 
 def get_data():
@@ -18,6 +14,7 @@ def get_data():
     import zipfile
     zf = zipfile.ZipFile('data/data.zip')
     df = pd.read_json(zf.open('data.json'))
+    df['fraud'] = df['acct_type'].apply(lambda x: True if 'fraud' in x else False)
     drop_cols = ['has_header', 
              'venue_address',
              'venue_country',
@@ -47,14 +44,42 @@ def get_data():
         except:
             continue
     df.dropna(inplace=True)
-    # needs more code copied from notebook
-    y = df_analysis.pop('fraud')
-    X = df_analysis.copy()
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2, stratify=y, shuffle=True, random_state=1)
+
+    df['listed'] = df['listed'].apply(lambda x: 1 if 'y' else 0)
+    df_analysis = pd.get_dummies(df, prefix_sep='_')
+
+    return df_analysis
 
 
+def gridsearch_with_output(estimator, parameter_grid, score, X_train, y_train):
+    '''
+        Parameters: estimator: the type of model (e.g. RandomForestRegressor())
+                    paramter_grid: dictionary defining the gridsearch parameters
+                    score: string or a callable to evalute the predictions
+                    X_train: 2d numpy array
+                    y_train: 1d numpy array
+        Returns:  best parameters and model fit with those parameters
+                  Also returns the best score
+    '''
+    model_gridsearch = GridSearchCV(estimator,
+                                    parameter_grid,
+                                    n_jobs=-1,
+                                    verbose=True,
+                                    scoring=score)
+    model_gridsearch.fit(X_train, y_train)
+    best_params = model_gridsearch.best_params_ 
+    model_best = model_gridsearch.best_estimator_
+    best_score = model_gridsearch.best_score_
+    print("\nResult of gridsearch:")
+    print("{0:<20s} | {1:<8s} | {2}".format("Parameter", "Optimal", "Gridsearch values"))
+    print("-" * 55)
+    for param, vals in parameter_grid.items():
+        print("{0:<20s} | {1:<8s} | {2}".format(str(param), 
+                                                str(best_params[param]),
+                                                str(vals)))
+    return best_params, model_best, best_score
 
-def score_classifer(model, model_name):
+def score_classifer(model, model_name, X_train, y_train):
     start_time = time.time()
     cv_scores = cross_validate(model, X_train, y_train,
                            cv=StratifiedKFold(n_splits=10, shuffle=True, random_state=1), 
@@ -76,7 +101,7 @@ def score_classifer(model, model_name):
     print(f'f1_score: {cvAvg_f1_score}')
     return cvAvg_Recall_score, cvAvg_Precision_score, cvAvg_f1_score
 
-def test_classifer(model, model_name):
+def test_classifer(model, model_name, X_train, y_train, X_test, y_test):
     start_time = time.time()
     model.fit(X_train, y_train)
     y_predict = model.predict(X_test)
