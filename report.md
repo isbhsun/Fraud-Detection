@@ -74,8 +74,6 @@ We tuned the hyperparameters of each of the three classifiers by using a grid se
 ## Validation and Testing Methodology
 We used a train-test-split to seperate our data into a training and testing set. Our testing set was represented by 20% of the data. Multiple models including a Random Forest, Gradient Boosted Grid Search, and XGBoost were tested and the accuracy metrics were reviewed to compare the accuracy metrics and decide which model to use.
 
-Using a Voting Classifier we combined our three models to try to optimize detection performance. We used soft voting to weight each classifier's importance and sum them together. Although the Voting Classifier did not have the highest of each accuracy metric, it did optimize the other classifiers to improve our final confusion matrix. 
-
 ## Performance Metrics
 To measure the performance of the models, we looked at the precision, recall, and F1 scores. We focused on these scores to try to minimize the number of false negatives and false positives predicted by each model. 
 
@@ -100,6 +98,8 @@ To measure the performance of the models, we looked at the precision, recall, an
     <img src="images/gb_matrix.png" />
 </p>
 
+## Voting Classifier
+Using a Voting Classifier we combined our three models to try to optimize detection performance. We used soft voting to weight each classifier's importance and sum them together using a weighting of [3,2,1] for classifiers Random Forest, XGBoost, and Gradient Boost respectively. We chose this weighting based on the order of each of the classifiers overall precision-recall accuracy. Although the Voting Classifier did not have the highest of each accuracy metric, it did optimize the other classifiers to improve our final confusion matrix. 
 
 <p align="center">
     <img src="images/voting_matrix.png" />
@@ -111,7 +111,7 @@ We also attempted to use an isolation forest algorithm to predict fraud. The res
     <img src="images/if_matrix.png" />
 </p>
 
-## Important Features
+## Potential Issues to explore further:
+* Our precision-recall cost matrices are based on the field 'gts' which we have assumed to be 'gross ticket sales', however we could not verify a precise linkage between this field and the itemized tickets purchases in the 'ticket types field'. 
+* There may exist data leakage in this dataset due to fraudelent transactions being cancelled before the sale was completed. We noticed that when the 'payout type' field was null, the transaction was labeled as fraud over 90% of the time. Using this or similar fields in the model would produce data leakage.
 
-
-## Future Improvements
