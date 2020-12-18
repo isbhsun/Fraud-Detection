@@ -79,47 +79,31 @@ Using a Voting Classifier we combined our three models to try to optimize detect
 ## Performance Metrics
 To measure the performance of the models, we looked at the precision, recall, and F1 scores. We focused on these scores to try to minimize the number of false negatives and false positives predicted by each model. 
 
+| Score     |Random Forest | XGBoost | Gradient Boost| Voting |
+| ----------|-----------|----------|-----------|-----------|
+| Precision | 0.536     | 0.932 | 0.958 | 0.934 |
+| Recall    | 0.926     | 0.831 | 0.797 | 0.853 |
+| F1        | 0.679     | 0.879 | 0.870 | 0.891 |
+
 
 <p align="center">
     <img src="images/rf_matrix.png" />
 </p>
 
-| Random Forest        |    Score  | 
-| ---------------------|-----------|
-| Precision            | 0.536     | 
-| Recall               | 0.926     | 
-| F1                   | 0.679     | 
 
 <p align="center">
     <img src="images/xgb_matrix.png" />
 </p>
-
-| XGBoost        |    Score  | 
-| ---------------------|-----------|
-| Precision            | 0.932     | 
-| Recall               | 0.831     | 
-| F1                   | 0.879     | 
 
 
 <p align="center">
     <img src="images/gb_matrix.png" />
 </p>
 
-| Gradient Boost        |    Score  | 
-| ---------------------|-----------|
-| Precision            | 0.958     | 
-| Recall               | 0.797     | 
-| F1                   | 0.870      | 
 
 <p align="center">
     <img src="images/voting_matrix.png" />
 </p>
-
-| Voting Classifier       |    Score  | 
-| ---------------------|-----------|
-| Precision            | 0.934     | 
-| Recall               | 0.853     | 
-| F1                   | 0.891     | 
 
 
 We also attempted to use an isolation forest algorithm to predict fraud. The results of the isolation forest model are below. 
