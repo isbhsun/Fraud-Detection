@@ -105,8 +105,8 @@ Using a Voting Classifier we combined our three models to try to optimize detect
     <img src="images/voting_matrix.png" />
 </p>
 
-
-We also attempted to use an isolation forest algorithm to predict fraud. The results of the isolation forest model are below. 
+## Isolation Forest
+We also utilized an isolation forest algorithm to predict fraud using a anomaly threshold of 95%. Different threshold values were not found to improve the results. 
 <p align="center">
     <img src="images/if_matrix.png" />
 </p>
