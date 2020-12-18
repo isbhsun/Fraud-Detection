@@ -2,8 +2,13 @@ from sklearn.ensemble import IsolationForest
 from cost_functions import plot_confusion_matrix
 from cost_functions import cs_confusion_matrix
 from cost_functions import cost_matrix
+from sklearn.metrics import precision_recall_fscore_support
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix
+import itertools
+import numpy as np
 
-def train(X,clf,ensembleSize=5,sampleSize=10000):
+def train(X,clf, df_analysis, ensembleSize=5,sampleSize=10000):
     mdlLst=[]
     for n in range(ensembleSize):
         X=df_analysis.sample(sampleSize)
@@ -18,12 +23,12 @@ def predict(X,mdlLst):
     y_pred=(y_pred*1.0)/len(mdlLst)
     return y_pred
 
-def print_isf_confusion(model, title):
-    isf=IsolationForest(n_estimators=100, max_samples='auto', contamination=0.01, \
-                        max_features=1.0, bootstrap=False, n_jobs=-1, random_state=42, verbose=0,behaviour="new")
+def print_isf_confusion(X_train, X_test, y_train, y_test, c_train, c_test, df_analysis):
+    title = "Isolation Forest"
+    isf=IsolationForest(n_estimators=100, max_samples='auto', contamination='auto', n_jobs=-1, random_state=42, verbose=0)
 
     # fit the classifier
-    mdlLst=train(X_train,isf)
+    mdlLst=train(X_train,isf, df_analysis)
 
     # predict with test data
     y_pred=predict(X_test, mdlLst)
@@ -45,11 +50,12 @@ def print_isf_confusion(model, title):
     plot_confusion_matrix(ax, cs_cnf_matrix, title, classes=['Legitimate','Fraud'],
                           cmap=plt.cm.Blues, currency=True)
 
-def isolation_forest_test_classifier():
-        isf=IsolationForest(n_estimators=100, max_samples='auto', contamination=0.01, \
-                        max_features=1.0, bootstrap=False, n_jobs=-1, random_state=42, verbose=0,behaviour="new")
+def isolation_forest_test_classifier(X_train, X_test, y_train, y_test, c_train, c_test, df_analysis):
+    
+    isf=IsolationForest(n_estimators=100, max_samples='auto', contamination='auto', n_jobs=-1, random_state=42, verbose=0)
+    
     # fit the classifier
-    mdlLst=train(X_train,isf)
+    mdlLst=train(X_train,isf, df_analysis)
 
     # predict with test data
     y_pred=predict(X_test, mdlLst)
@@ -59,8 +65,11 @@ def isolation_forest_test_classifier():
     y_pred_class[y_pred>=np.percentile(y_pred,95)]=1
     y_pred_class[y_pred<np.percentile(y_pred,95)]=0
 
-    p, r, f = precision_recall_fscore_support(y_test, y_pred_class, average='weighted')
-    print(f" model_name}")
+    prf_lst = precision_recall_fscore_support(y_test, y_pred_class, average='weighted')
+    r = prf_lst[1]
+    p = prf_lst[0]
+    f = prf_lst[2]
+    print("Isolation Forest")
     print(f'Recall: {r}')
     print(f'Precision: {p}')
     print(f'f1_score: {f}')
