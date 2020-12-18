@@ -1,7 +1,5 @@
 from sklearn.ensemble import IsolationForest
-from cost_functions import plot_confusion_matrix
-from cost_functions import cs_confusion_matrix
-from cost_functions import cost_matrix
+from src.cost_functions import plot_confusion_matrix, cs_confusion_matrix, cost_matrix
 from sklearn.metrics import precision_recall_fscore_support
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
@@ -40,15 +38,16 @@ def print_isf_confusion(X_train, X_test, y_train, y_test, c_train, c_test, df_an
 
     # print confusion matrix
     cnf_matrix = confusion_matrix(y_test, y_pred_class)
-    fix, ax = plt.subplots()
-    plot_confusion_matrix(ax, cnf_matrix, title, classes=['Legitimate','Fraud'],
+    fig, axs = plt.subplots(1,2)
+    plot_confusion_matrix(axs[0], cnf_matrix, title, classes=['Legitimate','Fraud'],
                               cmap=plt.cm.Blues, currency=False)
 
     # print cost matrix
     cs_cnf_matrix = cs_confusion_matrix(y_test, y_pred_class, cost_matrix(c_test)) 
-    fix, ax = plt.subplots()
-    plot_confusion_matrix(ax, cs_cnf_matrix, title, classes=['Legitimate','Fraud'],
+    plot_confusion_matrix(axs[1], cs_cnf_matrix, title, classes=['Legitimate','Fraud'],
                           cmap=plt.cm.Blues, currency=True)
+    
+    return fig     
 
 def isolation_forest_test_classifier(X_train, X_test, y_train, y_test, c_train, c_test, df_analysis):
     
