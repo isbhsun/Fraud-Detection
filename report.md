@@ -99,7 +99,7 @@ To measure the performance of the models, we looked at the precision, recall, an
 </p>
 
 ## Voting Classifier
-Using a Voting Classifier we combined our three models to try to optimize detection performance. We used soft voting to weight each classifier's importance and sum them together using a weighting of [3,2,1] for classifiers Random Forest, XGBoost, and Gradient Boost respectively. We chose this weighting based on the order of each of the classifiers overall precision-recall accuracy. Although the Voting Classifier did not have the highest of each accuracy metric, it did optimize the other classifiers to improve our final confusion matrix. 
+Using a Voting Classifier we combined our three models to try to optimize detection performance. We used a weighting of [3,2,1] for classifiers Random Forest, XGBoost, and Gradient Boost respectively. We chose this weighting based on the order of each of the classifiers overall precision and recall. 
 
 <p align="center">
     <img src="images/voting_matrix.png" />
@@ -112,6 +112,6 @@ We also utilized an isolation forest algorithm to predict fraud using a anomaly 
 </p>
 
 ## Potential Issues to explore further:
-* Our precision-recall cost matrices are based on the field 'gts' which we have assumed to be 'gross ticket sales', however we could not verify a precise linkage between this field and the itemized tickets purchases in the 'ticket types field'. 
-* There may exist data leakage in this dataset due to fraudelent transactions being cancelled before the sale was completed. We noticed that when the 'payout type' field was null, the transaction was labeled as fraud over 90% of the time. Using this or similar fields in the model would produce data leakage.
+* Our precision-recall cost matrices are based on the field 'gts' which we have assumed to be 'gross ticket sales', however we could not verify a precise linkage between this field and the itemized tickets purchases in the 'ticket types' field. 
+* There may exist data leakage in this dataset due to fraudelent transactions being cancelled before the sale was completed. For example we noticed that when the 'payout type' field was null, the transaction was labeled as fraud over 90% of the time. Similary, other fields may this same issue.
 
