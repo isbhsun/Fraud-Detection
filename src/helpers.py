@@ -46,6 +46,9 @@ def get_data():
     df.dropna(inplace=True)
 
     df['listed'] = df['listed'].apply(lambda x: 1 if 'y' else 0)
+    df['delivery_method'] = df['delivery_method'].map({0: 'zero', 1.0: 'one', 3.0: 'three'})
+    df['user_type'] = df['user_type'].apply(lambda x: str(x))
+    
     df_analysis = pd.get_dummies(df, prefix_sep='_')
 
     return df_analysis
