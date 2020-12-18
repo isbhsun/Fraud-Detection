@@ -10,10 +10,11 @@ Prior to building our model we reviewed the account types associated with our tr
 
 Reviewing our features, we noticed that several of them may pose issues for our machine learning models when creating our dummy variables. To avoid these issues, we removed several columns from our dataframe. 
 
-After we had our final data frame we did an exploratory data analysis on our data to determine how user age, and sale duration varied with fraudulent and non-fraudulent transactions. 
+After we had our final data frame we did an exploratory data analysis on our data to determine how user age, and sale duration varied with fraudulent and non-fraudulent transactions.
+
 
 <p align="center">
-    <img src="images/user_age_freq.png" />
+    <img src="images/User_age_freq.png" />
 </p>
 
 <p align="center">
